@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/arpan/projects/Lift3/build",
+  "command": "/usr/bin/c++     -std=c++1y -g   -o CMakeFiles/lift3.dir/main.cpp.o -c /home/arpan/projects/Lift3/main.cpp",
+  "file": "/home/arpan/projects/Lift3/main.cpp"
+}
+]
