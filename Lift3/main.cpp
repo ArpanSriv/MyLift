@@ -4,21 +4,61 @@
 using namespace std;
 
 #define MIN_FLOOR 0
-#define MAX_FLOORS 5
+#define MAX_FLOORS 10
+
+#ifdef _win32
+#define sleepCommand "timeout 1"
+#endif
+
 
 #ifdef _win64
-#define sleepCommand "timeout 3"
+#define sleepCommand "timeout 1"
 #endif
 
 #ifdef __linux
 #define sleepCommand "sleep 1"
 #endif
 
+char sleepCommand[] = "timeout 1";
+
 enum movement {
         STOP,
         UP, 
         DOWN
     };
+    
+class Passenger {
+	
+	private:
+		int mCurrentFloor;
+		int mTargetFloor;
+		
+	public:
+		
+		Passenger() {
+			
+			mCurrentFloor = MIN_FLOOR;
+			mTargetFloor = MAX_FLOORS;
+			
+		}
+		
+		Passenger(int currentFloor, int targetFloor) {
+			
+			mCurrentFloor = currentFloor;
+			mTargetFloor = targetFloor;
+			
+		}
+		
+		void setCurrentFloor(int currentFloor) { mCurrentFloor = currentFloor; }
+		
+		void setTargetFloor(int targetFloor) { mTargetFloor = targetFloor; }
+		
+		int getCurrentFloor() { return mCurrentFloor; }
+	
+		int getTargetFloor() { return mTargetFloor; }
+	
+	
+};
 
 class Lift {
     
@@ -50,18 +90,36 @@ public:
     
     void showLiftStatus() {
         
-        system("clear");
+        system("CLS");
        
         int i = 0;
+        int j = this->getCurrentFloor();
         
-        while (i <= this->getCurrentFloor()) {
+        cout << "Moving the lift..." << endl << endl;
         
-            cout << " " ;
+        while (i < this->getCurrentFloor()) {
+        
+            cout << "-" ;
             i++;
             
         }
         
-        cout << this->getCurrentFloor() << endl;
+        //Check the current floor to print "G"/"T" instead of 0 or maxFloor respectively
+        if (this->getCurrentFloor() == 0) cout << "G";
+        
+      	else if (this->getCurrentFloor() == this->getMaxFloor()) cout << "T";
+        
+		else cout << this->getCurrentFloor();
+        
+        
+        while (j < this->getMaxFloor()) {
+        
+            cout << "-" ;
+            j++;
+            
+        }
+        
+        cout << endl;
         
     }
     
@@ -119,49 +177,69 @@ public:
     
     int getMaxFloor() { return mMaxFloor; }
     
-    
 };
 
-void AskUser(Lift& lift) {
-
-    int floor;
-    
-    cout << "Enter the floor to go on: " ;
-    cin >> floor;
-    
-    lift.Request(floor);
-    
-}
-
-void testMovement(Lift& lift) {
-    
-    lift.Request(3);
-    lift.Request(1);
-    lift.Request(5);
-    
-}
-
-void lol(Lift lift) {
+void setPassengerDetails(Passenger& passenger) {
+	
+	int currentFloor, targetFloor;
+	
+	cout << "Enter the current and target floor of the passenger: "; 
+	cin >> currentFloor >> targetFloor;
+	
+	passenger.setCurrentFloor(currentFloor);
+	passenger.setTargetFloor(targetFloor);
+	
+	cout << endl;
+	
 }
     
 
 int main() {
     
-    int userChoice;
+    int userChoice, num;
     char finalChoice;
     
     Lift lift(MIN_FLOOR, MAX_FLOORS, 0);
     
-    cout << "Lift with the properties created: " << endl << "Min Floor: " << lift.getMinFloor() << endl << "Max Floor: " << lift.getMaxFloor() << endl << "Current Floor: " << lift.getCurrentFloor() << endl;
-  
     do {
         
-        system("clear");
+        system("CLS");
+        
+        cout << "Lift status " << endl << "Min Floor: " << lift.getMinFloor() << endl << "Max Floor: " << lift.getMaxFloor() << endl << "Current Floor: " << lift.getCurrentFloor() << endl << endl;
     
+    	cout << "Enter the number of passengers: " ;
+    	cin >> num;
+    	
+    	Passenger passenger[num];
+    	
+    	for (int i = 0; i < num; i++) {
+   	
+    		system("CLS");
+    		cout << "PASSENGER " << i + 1 << endl;
+    		
+			setPassengerDetails(passenger[i]);
+			
+			cout << endl;    		
+    	}
+    	
+    	cout << "Showing the details of the passengers" << endl; 
+    	cout << "C   T" << endl;
+    	cout << "-----" << endl;
+    
+    	for (int i = 0; i < num; i++) {
+    		
+			cout << passenger[i].getCurrentFloor() << "   " << passenger[i].getTargetFloor();
+			
+			cout << endl;    		
+    	}
+    	
+    	
+    	
+    	
         cout << "What do you want to do with the lift?" << endl;
-        cout << "1. Move the lift to desired floor" << endl;
-        cout << "2. Halt the lift in between" << endl;
-        cout << "3. Enter a set of floors to simulate the movement" << endl;
+        cout << "1. Move the lift to desired floor (preliminary movement)" << endl;
+        cout << "2. OPTION 2 " << endl; //TODO
+        cout << "3. OPTION 3" << endl;	//TODO
         cout << "Enter your choice: " ;
         
         cin >> userChoice;
@@ -176,7 +254,7 @@ int main() {
                     
                     if(floor > MAX_FLOORS) cout << "Bummer! Please enter a valid value between " << MIN_FLOOR << " and " << MAX_FLOORS << "!" << endl;
                     
-                    cout << "Enter the floor to which you want to move the lift on: ";
+                    cout << endl << "Enter the floor to which you want to move the lift on: ";
                     cin >> floor;
                 
                     
